@@ -49,18 +49,13 @@ function hmde_add_body_class( $classes ) {
         return $classes;
     }
 
-    // Prefer group name for nicer class, fallback to id
-    $groups = get_option( 'hmde_groups', array() );
-    $label  = $gid;
-
-    if ( is_array( $groups ) && isset( $groups[ $gid ]['name'] ) ) {
-        $label = $groups[ $gid ]['name'];
+    $group_id = absint( $gid );
+    if ( ! $group_id ) {
+        return $classes;
     }
 
-    $slug = hmde_slugify( $label );
-
     $classes[] = 'hm-demo-group';
-    $classes[] = 'hm-demo-group-' . $slug;
+    $classes[] = 'hm-demo-group-' . $group_id;
 
     return $classes;
 }
@@ -75,14 +70,10 @@ function hmde_current_group_body_selector() {
         return '';
     }
 
-    $groups = get_option( 'hmde_groups', array() );
-    $label  = $gid;
-
-    if ( is_array( $groups ) && isset( $groups[ $gid ]['name'] ) ) {
-        $label = $groups[ $gid ]['name'];
+    $group_id = absint( $gid );
+    if ( ! $group_id ) {
+        return '';
     }
 
-    $slug = hmde_slugify( $label );
-
-    return 'body.hm-demo-group-' . $slug;
+    return 'body.hm-demo-group-' . $group_id;
 }

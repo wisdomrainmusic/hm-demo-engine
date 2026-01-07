@@ -18,19 +18,20 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 
     // Safely compute plugin base URL (no constants required)
     $plugin_url = plugin_dir_url( dirname( __FILE__ ) );
+    $ver        = defined( 'HM_DEMO_ENGINE_VERSION' ) ? HM_DEMO_ENGINE_VERSION : time();
 
     wp_enqueue_style(
         'hmde-presets-admin',
         $plugin_url . 'admin/assets/presets-admin.css',
         array(),
-        '1.0.0'
+        $ver
     );
 
     wp_enqueue_script(
         'hmde-presets-admin',
         $plugin_url . 'admin/assets/presets-admin.js',
         array( 'jquery', 'wp-color-picker' ),
-        '1.0.0',
+        $ver,
         true
     );
 } );
@@ -233,7 +234,7 @@ function hmde_render_presets_page() {
                             <div class="hmde-global-palettes">
                                 <div class="hmde-global-palettes__header">
                                     <h2>Global Palettes</h2>
-                                    <p class="description">Click-to-apply will be enabled in the next commit.</p>
+                                    <p class="description">Click a palette to apply its colors to the preset fields.</p>
                                 </div>
 
                                 <div class="hmde-global-palettes__grid">
