@@ -5,20 +5,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 const HMDE_PRESETS_OPTION_KEY = 'hmde_presets';
 
-/**
- * Admin assets (color picker)
- */
-function hmde_admin_enqueue_assets( $hook ) {
-    // Only on our presets page
-    if ( strpos( $hook, 'hm-demo-engine_page_hm-demo-engine-presets' ) === false ) {
+add_action( 'admin_enqueue_scripts', function ( $hook ) {
+    if ( $hook !== 'demo-engine_page_hmde-presets' ) {
         return;
     }
 
-    wp_enqueue_style( 'wp-color-picker' );
-    wp_enqueue_script( 'wp-color-picker' );
-    wp_add_inline_script( 'wp-color-picker', 'jQuery(function($){ $(".hmde-color").wpColorPicker(); });' );
-}
-add_action( 'admin_enqueue_scripts', 'hmde_admin_enqueue_assets' );
+    wp_enqueue_style(
+        'hmde-presets-admin',
+        HMD_ENGINE_URL . 'admin/assets/presets-admin.css',
+        array(),
+        HMD_ENGINE_VERSION
+    );
+
+    wp_enqueue_script(
+        'hmde-presets-admin',
+        HMD_ENGINE_URL . 'admin/assets/presets-admin.js',
+        array( 'jquery', 'wp-color-picker' ),
+        HMD_ENGINE_VERSION,
+        true
+    );
+} );
 
 /**
  * Data helpers
@@ -208,31 +214,109 @@ function hmde_render_presets_page() {
                     </td>
                 </tr>
 
+                <?php
+                $hmde_global_palettes = function_exists( 'hmde_get_global_palettes' ) ? hmde_get_global_palettes() : array();
+                ?>
+
+                <?php if ( ! empty( $hmde_global_palettes ) && is_array( $hmde_global_palettes ) ) : ?>
+                    <tr>
+                        <td colspan="2">
+                            <div class="hmde-global-palettes">
+                                <div class="hmde-global-palettes__header">
+                                    <h2>Global Palettes</h2>
+                                    <p class="description">Click-to-apply will be enabled in the next commit.</p>
+                                </div>
+
+                                <div class="hmde-global-palettes__grid">
+                                    <?php foreach ( $hmde_global_palettes as $palette_key => $palette ) : ?>
+                                        <?php
+                                        $label  = isset( $palette['label'] ) ? (string) $palette['label'] : (string) $palette_key;
+                                        $colors = isset( $palette['colors'] ) && is_array( $palette['colors'] ) ? $palette['colors'] : array();
+
+                                        // Normalize expected keys (so UI is consistent)
+                                        $primary = isset( $colors['primary'] ) ? (string) $colors['primary'] : '';
+                                        $dark    = isset( $colors['dark'] ) ? (string) $colors['dark'] : '';
+                                        $bg      = isset( $colors['background'] ) ? (string) $colors['background'] : '';
+                                        $footer  = isset( $colors['footer'] ) ? (string) $colors['footer'] : '';
+                                        $link    = isset( $colors['link'] ) ? (string) $colors['link'] : '';
+
+                                        // Store colors for next commit (10.3 click-to-apply)
+                                        $data_colors = wp_json_encode( array(
+                                            'primary'    => $primary,
+                                            'dark'       => $dark,
+                                            'background' => $bg,
+                                            'footer'     => $footer,
+                                            'link'       => $link,
+                                        ) );
+                                        ?>
+                                        <button
+                                            type="button"
+                                            class="hmde-palette-card"
+                                            data-palette="<?php echo esc_attr( $palette_key ); ?>"
+                                            data-colors="<?php echo esc_attr( $data_colors ); ?>"
+                                        >
+                                            <span class="hmde-palette-card__title"><?php echo esc_html( $label ); ?></span>
+
+                                            <span class="hmde-palette-card__swatches" aria-hidden="true">
+                                                <?php if ( $primary ) : ?><span class="hmde-swatch" style="background: <?php echo esc_attr( $primary ); ?>"></span><?php endif; ?>
+                                                <?php if ( $dark ) : ?><span class="hmde-swatch" style="background: <?php echo esc_attr( $dark ); ?>"></span><?php endif; ?>
+                                                <?php if ( $bg ) : ?><span class="hmde-swatch" style="background: <?php echo esc_attr( $bg ); ?>"></span><?php endif; ?>
+                                                <?php if ( $footer ) : ?><span class="hmde-swatch" style="background: <?php echo esc_attr( $footer ); ?>"></span><?php endif; ?>
+                                                <?php if ( $link ) : ?><span class="hmde-swatch" style="background: <?php echo esc_attr( $link ); ?>"></span><?php endif; ?>
+                                            </span>
+
+                                            <span class="hmde-palette-card__meta">
+                                                <?php echo esc_html( trim( $primary . ' ' . $dark . ' ' . $bg ) ); ?>
+                                            </span>
+                                        </button>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+
+                <tr>
+                    <td colspan="2">
+                        <div class="hmde-current-palette-preview">
+                            <span class="hmde-current-palette-label">Current Palette</span>
+
+                            <div class="hmde-current-palette-swatches">
+                                <span class="hmde-current-swatch" data-color-key="primary"></span>
+                                <span class="hmde-current-swatch" data-color-key="dark"></span>
+                                <span class="hmde-current-swatch" data-color-key="background"></span>
+                                <span class="hmde-current-swatch" data-color-key="footer"></span>
+                                <span class="hmde-current-swatch" data-color-key="link"></span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
                 <tr><th colspan="2"><h3>Colors</h3></th></tr>
 
                 <tr>
                     <th scope="row"><label for="hmde_primary">Primary</label></th>
-                    <td><input class="hmde-color" name="colors[primary]" id="hmde_primary" type="text" value="<?php echo esc_attr( $current['colors']['primary'] ); ?>" /></td>
+                    <td><input class="hmde-color-field" name="colors[primary]" id="hmde_primary" type="text" value="<?php echo esc_attr( $current['colors']['primary'] ); ?>" /></td>
                 </tr>
 
                 <tr>
                     <th scope="row"><label for="hmde_dark">Dark</label></th>
-                    <td><input class="hmde-color" name="colors[dark]" id="hmde_dark" type="text" value="<?php echo esc_attr( $current['colors']['dark'] ); ?>" /></td>
+                    <td><input class="hmde-color-field" name="colors[dark]" id="hmde_dark" type="text" value="<?php echo esc_attr( $current['colors']['dark'] ); ?>" /></td>
                 </tr>
 
                 <tr>
                     <th scope="row"><label for="hmde_bg">Background</label></th>
-                    <td><input class="hmde-color" name="colors[bg]" id="hmde_bg" type="text" value="<?php echo esc_attr( $current['colors']['bg'] ); ?>" /></td>
+                    <td><input class="hmde-color-field" name="colors[bg]" id="hmde_bg" type="text" value="<?php echo esc_attr( $current['colors']['bg'] ); ?>" /></td>
                 </tr>
 
                 <tr>
                     <th scope="row"><label for="hmde_footer">Footer</label></th>
-                    <td><input class="hmde-color" name="colors[footer]" id="hmde_footer" type="text" value="<?php echo esc_attr( $current['colors']['footer'] ); ?>" /></td>
+                    <td><input class="hmde-color-field" name="colors[footer]" id="hmde_footer" type="text" value="<?php echo esc_attr( $current['colors']['footer'] ); ?>" /></td>
                 </tr>
 
                 <tr>
                     <th scope="row"><label for="hmde_link">Link</label></th>
-                    <td><input class="hmde-color" name="colors[link]" id="hmde_link" type="text" value="<?php echo esc_attr( $current['colors']['link'] ); ?>" /></td>
+                    <td><input class="hmde-color-field" name="colors[link]" id="hmde_link" type="text" value="<?php echo esc_attr( $current['colors']['link'] ); ?>" /></td>
                 </tr>
 
                 <tr><th colspan="2"><h3>Fonts</h3></th></tr>
@@ -282,6 +366,7 @@ function hmde_render_presets_page() {
                     <th>Primary</th>
                     <th>Background</th>
                     <th>Fonts</th>
+                    <th>Palette</th>
                     <th style="width: 220px;">Actions</th>
                 </tr>
                 </thead>
@@ -297,6 +382,30 @@ function hmde_render_presets_page() {
                             $hf = $preset['fonts']['heading_font'] ?? 'System Default';
                             echo esc_html( $bf . ' / ' . $hf );
                             ?>
+                        </td>
+                        <td class="hmde-preset-palette-cell">
+                            <?php
+                            $p_primary = isset( $preset['colors']['primary'] ) ? (string) $preset['colors']['primary'] : '';
+                            $p_dark    = isset( $preset['colors']['dark'] ) ? (string) $preset['colors']['dark'] : '';
+                            $p_bg      = isset( $preset['colors']['bg'] ) ? (string) $preset['colors']['bg'] : '';
+                            $p_footer  = isset( $preset['colors']['footer'] ) ? (string) $preset['colors']['footer'] : '';
+                            $p_link    = isset( $preset['colors']['link'] ) ? (string) $preset['colors']['link'] : '';
+                            if ( $p_bg === '' && isset( $preset['colors']['background'] ) ) {
+                                $p_bg = (string) $preset['colors']['background'];
+                            }
+                            ?>
+
+                            <span class="hmde-mini-palette" aria-hidden="true">
+                                <?php if ( $p_primary ) : ?><span class="hmde-mini-swatch" style="background: <?php echo esc_attr( $p_primary ); ?>"></span><?php endif; ?>
+                                <?php if ( $p_dark ) : ?><span class="hmde-mini-swatch" style="background: <?php echo esc_attr( $p_dark ); ?>"></span><?php endif; ?>
+                                <?php if ( $p_bg ) : ?><span class="hmde-mini-swatch" style="background: <?php echo esc_attr( $p_bg ); ?>"></span><?php endif; ?>
+                                <?php if ( $p_footer ) : ?><span class="hmde-mini-swatch" style="background: <?php echo esc_attr( $p_footer ); ?>"></span><?php endif; ?>
+                                <?php if ( $p_link ) : ?><span class="hmde-mini-swatch" style="background: <?php echo esc_attr( $p_link ); ?>"></span><?php endif; ?>
+                            </span>
+
+                            <span class="hmde-mini-palette-codes">
+                                <?php echo esc_html( trim( $p_primary . ' ' . $p_bg ) ); ?>
+                            </span>
                         </td>
                         <td>
                             <?php
