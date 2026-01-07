@@ -49,8 +49,8 @@ function hmde_add_body_class( $classes ) {
         return $classes;
     }
 
-    $group_id = absint( $gid );
-    if ( ! $group_id ) {
+    $group_id = is_string( $gid ) ? sanitize_key( $gid ) : '';
+    if ( $group_id === '' ) {
         return $classes;
     }
 
@@ -70,8 +70,8 @@ function hmde_current_group_body_selector() {
         return '';
     }
 
-    $group_id = absint( $gid );
-    if ( ! $group_id ) {
+    $group_id = is_string( $gid ) ? sanitize_key( $gid ) : '';
+    if ( $group_id === '' ) {
         return '';
     }
 
