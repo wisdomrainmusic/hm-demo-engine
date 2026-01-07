@@ -59,6 +59,11 @@ function hmde_handle_groups_actions() {
             array(
                 'id'        => $id,
                 'preset_id' => '', // Commit 5: group -> preset mapping
+                'menu_hide' => array(
+                    'primary'   => 0,
+                    'mobile'    => 0,
+                    'secondary' => 0,
+                ),
             ),
             $payload
         );
@@ -89,6 +94,16 @@ function hmde_handle_groups_actions() {
             }
 
             $groups[ $gid ]['preset_id'] = $pid;
+
+            $menu_hide_primary   = isset( $_POST['menu_hide'][ $gid ]['primary'] ) ? 1 : 0;
+            $menu_hide_mobile    = isset( $_POST['menu_hide'][ $gid ]['mobile'] ) ? 1 : 0;
+            $menu_hide_secondary = isset( $_POST['menu_hide'][ $gid ]['secondary'] ) ? 1 : 0;
+
+            $groups[ $gid ]['menu_hide'] = array(
+                'primary'   => $menu_hide_primary,
+                'mobile'    => $menu_hide_mobile,
+                'secondary' => $menu_hide_secondary,
+            );
         }
 
         hmde_save_groups( $groups );
@@ -182,6 +197,7 @@ function hmde_render_groups_page() {
                         <th>Name</th>
                         <th>Description</th>
                         <th>Preset</th>
+                        <th>Menu Hide</th>
                         <th style="width: 160px;">Actions</th>
                     </tr>
                     </thead>
@@ -193,6 +209,10 @@ function hmde_render_groups_page() {
                             <td>
                                 <?php
                                 $selected_preset = $group['preset_id'] ?? '';
+                                $menu_hide = $group['menu_hide'] ?? array();
+                                $menu_hide_primary = isset( $menu_hide['primary'] ) ? (int) $menu_hide['primary'] : 0;
+                                $menu_hide_mobile = isset( $menu_hide['mobile'] ) ? (int) $menu_hide['mobile'] : 0;
+                                $menu_hide_secondary = isset( $menu_hide['secondary'] ) ? (int) $menu_hide['secondary'] : 0;
                                 ?>
                                 <select name="group_preset[<?php echo esc_attr( $id ); ?>]">
                                     <option value="">— None —</option>
@@ -202,6 +222,20 @@ function hmde_render_groups_page() {
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
+                            </td>
+                            <td>
+                                <label style="display:block;">
+                                    <input type="checkbox" name="menu_hide[<?php echo esc_attr( $id ); ?>][primary]" value="1" <?php checked( $menu_hide_primary, 1 ); ?> />
+                                    Primary
+                                </label>
+                                <label style="display:block;">
+                                    <input type="checkbox" name="menu_hide[<?php echo esc_attr( $id ); ?>][mobile]" value="1" <?php checked( $menu_hide_mobile, 1 ); ?> />
+                                    Mobile
+                                </label>
+                                <label style="display:block;">
+                                    <input type="checkbox" name="menu_hide[<?php echo esc_attr( $id ); ?>][secondary]" value="1" <?php checked( $menu_hide_secondary, 1 ); ?> />
+                                    Secondary
+                                </label>
                             </td>
                             <td>
                                 <?php

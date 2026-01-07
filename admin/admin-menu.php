@@ -35,6 +35,15 @@ function hm_demo_engine_register_admin_menu() {
         'hm-demo-engine-groups',
         'hm_demo_engine_groups_page'
     );
+
+    add_submenu_page(
+        'hm-demo-engine',
+        'Settings',
+        'Settings',
+        'manage_options',
+        'hm-demo-engine-settings',
+        'hmde_render_settings_page'
+    );
 }
 add_action( 'admin_menu', 'hm_demo_engine_register_admin_menu' );
 

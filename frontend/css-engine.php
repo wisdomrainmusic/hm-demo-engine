@@ -163,3 +163,9 @@ function hmde_print_css_variables() {
     echo "</style>\n";
 }
 add_action( 'wp_head', 'hmde_print_css_variables', 20 );
+
+function hmde_get_css_mode() {
+    $settings = get_option( 'hmde_settings', array() );
+    $mode = is_array( $settings ) && isset( $settings['mode'] ) ? (string) $settings['mode'] : 'inherit';
+    return in_array( $mode, array( 'inherit', 'force' ), true ) ? $mode : 'inherit';
+}
