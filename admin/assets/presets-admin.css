@@ -1,0 +1,170 @@
+/* Presets Admin – base file */
+/* Global Palette, Swatches ve Preview stilleri buraya eklenecek */
+.hmde-global-palettes {
+  margin: 16px 0 18px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+}
+
+.hmde-global-palettes__header h2 {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+
+.hmde-global-palettes__header .description {
+  margin: 0 0 12px;
+  color: #646970;
+}
+
+.hmde-global-palettes__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 1200px) {
+  .hmde-global-palettes__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .hmde-global-palettes__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .hmde-global-palettes__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hmde-palette-card {
+  width: 100%;
+  text-align: left;
+  padding: 12px;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+  background: #f6f7f7;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.hmde-palette-card:hover {
+  background: #fff;
+  border-color: #c3c4c7;
+  transform: translateY(-1px);
+}
+
+.hmde-palette-card__title {
+  display: block;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: #1d2327;
+}
+
+.hmde-palette-card__swatches {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.hmde-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.hmde-palette-card__meta {
+  display: block;
+  font-size: 11px;
+  color: #646970;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hmde-palette-card.is-selected {
+  border-color: #2271b1;
+  box-shadow: 0 0 0 1px rgba(34, 113, 177, 0.35);
+  background: #fff;
+}
+
+.hmde-palette-card.is-applied {
+  transform: translateY(-2px);
+}
+
+.hmde-current-palette-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 14px;
+  padding: 10px 12px;
+  background: #f6f7f7;
+  border: 1px dashed #c3c4c7;
+  border-radius: 10px;
+}
+
+.hmde-current-palette-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1d2327;
+  white-space: nowrap;
+}
+
+.hmde-current-palette-swatches {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.hmde-current-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.hmde-preset-palette-cell {
+  min-width: 160px;
+}
+
+.hmde-mini-palette {
+  display: inline-flex;
+  gap: 6px;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.hmde-mini-palette:empty::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.hmde-mini-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.hmde-mini-palette-codes {
+  font-size: 11px;
+  color: #646970;
+  vertical-align: middle;
+  white-space: nowrap;
+}

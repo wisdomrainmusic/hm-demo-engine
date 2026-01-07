@@ -20,6 +20,7 @@ define( 'HM_DEMO_ENGINE_VERSION', '0.9.0' );
 
 if ( is_admin() ) {
     require_once HM_DEMO_ENGINE_PATH . 'admin/admin-menu.php';
+    require_once HM_DEMO_ENGINE_PATH . 'admin/palettes.php';
     require_once HM_DEMO_ENGINE_PATH . 'admin/presets.php';
     require_once HM_DEMO_ENGINE_PATH . 'admin/groups.php';
     require_once HM_DEMO_ENGINE_PATH . 'admin/page-group-metabox.php';
