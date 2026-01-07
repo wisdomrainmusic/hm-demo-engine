@@ -6,21 +6,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Frontend CSS Variable Engine
  *
- * Commit 6:
- * - Find current page (singular page only)
- * - Read group mapping from post meta
- * - Read group's preset_id from hmde_groups option
- * - Read preset data from hmde_presets option
- * - Print CSS variables in <head>
- *
- * Commit 7 will add body class targeting. For now we apply to :root.
+ * Commit 7:
+ * - Apply variables to current group's body class selector
+ * - Requires frontend/body-class.php
  */
 
 function hmde_is_supported_frontend_context() {
     if ( is_admin() ) {
         return false;
     }
-    // Only apply on singular pages for now
     return is_singular( 'page' );
 }
 
@@ -39,7 +33,6 @@ function hmde_get_group_id_for_page( $page_id ) {
         return is_string( $gid ) ? $gid : '';
     }
 
-    // Fallback key if constant not loaded for any reason
     $gid = get_post_meta( $page_id, '_hmde_group_id', true );
     return is_string( $gid ) ? $gid : '';
 }
@@ -78,7 +71,6 @@ function hmde_build_css_variables_from_preset( array $preset ) {
     $colors = isset( $preset['colors'] ) && is_array( $preset['colors'] ) ? $preset['colors'] : array();
     $fonts  = isset( $preset['fonts'] ) && is_array( $preset['fonts'] ) ? $preset['fonts'] : array();
 
-    // Font label -> CSS stack mapping (keep in sync with admin choices)
     $font_map = array(
         'System Default'   => 'system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif',
         'Inter'            => '"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif',
@@ -107,7 +99,6 @@ function hmde_build_css_variables_from_preset( array $preset ) {
         '--hm-font-heading' => $heading_stack,
     );
 
-    // Only output valid/filled variables (keep fonts always)
     $out = array();
     foreach ( $vars as $k => $v ) {
         if ( $k === '--hm-font-body' || $k === '--hm-font-heading' ) {
@@ -146,16 +137,24 @@ function hmde_print_css_variables() {
         return;
     }
 
+    $selector = function_exists( 'hmde_current_group_body_selector' )
+        ? hmde_current_group_body_selector()
+        : '';
+
+    if ( ! $selector ) {
+        // Fallback to :root
+        $selector = ':root';
+    }
+
     $vars = hmde_build_css_variables_from_preset( $preset );
     if ( empty( $vars ) ) {
         return;
     }
 
-    echo "\n<!-- HM Demo Engine (Commit 6) -->\n";
+    echo "\n<!-- HM Demo Engine (Commit 7) -->\n";
     echo "<style id=\"hmde-css-vars\">\n";
-    echo ":root{\n";
+    echo "{$selector}{\n";
     foreach ( $vars as $k => $v ) {
-        // basic escaping
         $k = preg_replace( '/[^a-zA-Z0-9\-\_]/', '', $k );
         $v = str_replace( array( "\n", "\r" ), '', $v );
         echo "  {$k}: {$v};\n";

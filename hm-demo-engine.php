@@ -3,7 +3,7 @@
  * Plugin Name: HM Demo Engine
  * Plugin URI:  https://github.com/wisdomrainmusic/hm-demo-engine
  * Description: Page group based color & typography preset engine for demo websites.
- * Version:     0.6.0
+ * Version:     0.7.0
  * Author:      Wisdom Rain
  * Author URI:  https://wisdomrainmusic.com
  * License:     GPL v2 or later
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'HM_DEMO_ENGINE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'HM_DEMO_ENGINE_URL', plugin_dir_url( __FILE__ ) );
-define( 'HM_DEMO_ENGINE_VERSION', '0.6.0' );
+define( 'HM_DEMO_ENGINE_VERSION', '0.7.0' );
 
 if ( is_admin() ) {
     require_once HM_DEMO_ENGINE_PATH . 'admin/admin-menu.php';
@@ -25,4 +25,5 @@ if ( is_admin() ) {
     require_once HM_DEMO_ENGINE_PATH . 'admin/page-group-metabox.php';
 }
 
+require_once HM_DEMO_ENGINE_PATH . 'frontend/body-class.php';
 require_once HM_DEMO_ENGINE_PATH . 'frontend/css-engine.php';
