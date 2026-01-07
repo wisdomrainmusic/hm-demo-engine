@@ -16,18 +16,21 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
     // WP color picker styles (sometimes not auto-enqueued)
     wp_enqueue_style( 'wp-color-picker' );
 
+    // Safely compute plugin base URL (no constants required)
+    $plugin_url = plugin_dir_url( dirname( __FILE__ ) );
+
     wp_enqueue_style(
         'hmde-presets-admin',
-        HMD_ENGINE_URL . 'admin/assets/presets-admin.css',
+        $plugin_url . 'admin/assets/presets-admin.css',
         array(),
-        HMD_ENGINE_VERSION
+        '1.0.0'
     );
 
     wp_enqueue_script(
         'hmde-presets-admin',
-        HMD_ENGINE_URL . 'admin/assets/presets-admin.js',
+        $plugin_url . 'admin/assets/presets-admin.js',
         array( 'jquery', 'wp-color-picker' ),
-        HMD_ENGINE_VERSION,
+        '1.0.0',
         true
     );
 } );
