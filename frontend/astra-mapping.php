@@ -42,11 +42,14 @@ function hmde_print_astra_mapping_css() {
 
 /* ==========================================
    PAGE TITLE / ENTRY HEADER FIX (Astra)
+   Higher specificity for Astra title rules
    ========================================== */
 
-{$selector} .entry-title,
-{$selector} .entry-title a,
-{$selector} .ast-single-post .entry-title,
+{$selector} header.entry-header .entry-title,
+{$selector} header.entry-header h1.entry-title,
+{$selector} h1.entry-title,
+{$selector} h1.ass.entry-title,
+{$selector} .ast-single-post header.entry-header .entry-title,
 {$selector} .ast-page-title,
 {$selector} .page-title,
 {$selector} .archive-title{
@@ -163,6 +166,57 @@ function hmde_print_astra_mapping_css() {
   background: var(--hm-primary, inherit);
   color: #fff;
   border-radius: 999px;
+}
+
+/* ==========================================
+   MOBILE FIXES
+   - Hamburger icon color (Astra SVG variants)
+   - Prevent horizontal overflow (mobile width issue)
+   ========================================== */
+
+/* Prevent horizontal scroll / page widening (scoped) */
+{$selector},
+{$selector} #page,
+{$selector} .site,
+{$selector} .site-content,
+{$selector} .ast-container{
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Common overflow offenders */
+{$selector} img,
+{$selector} svg,
+{$selector} iframe,
+{$selector} video{
+  max-width: 100%;
+  height: auto;
+}
+
+/* Hamburger / Mobile menu trigger (Astra icon variants) */
+{$selector} .ast-mobile-menu-trigger-minimal,
+{$selector} .ast-mobile-menu-trigger-minimal button{
+  color: var(--hm-primary, inherit);
+}
+
+/* If rendered as SVG iconset */
+{$selector} .ast-mobile-menu-trigger-minimal svg,
+{$selector} .ast-mobile-menu-trigger-minimal svg *{
+  fill: var(--hm-primary, inherit);
+  stroke: var(--hm-primary, inherit);
+}
+
+/* Some Astra builds use these */
+{$selector} .ast-mobile-menu-trigger-minimal .ahfb-svg-iconset svg,
+{$selector} .ast-mobile-menu-trigger-minimal .ahfb-svg-iconset svg *{
+  fill: var(--hm-primary, inherit);
+  stroke: var(--hm-primary, inherit);
+}
+
+/* Fallback: icon element */
+{$selector} .ast-mobile-menu-trigger-minimal i,
+{$selector} .ast-mobile-menu-trigger-minimal .astra-icon{
+  color: var(--hm-primary, inherit);
 }
 ";
 
