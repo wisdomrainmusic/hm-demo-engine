@@ -24,10 +24,13 @@ function hmde_print_astra_mapping_css() {
         return;
     }
 
+    $mode = function_exists( 'hmde_get_css_mode' ) ? hmde_get_css_mode() : 'inherit';
+    $imp  = ( $mode === 'force' ) ? ' !important' : '';
+
     $css = "
 {$selector}{
-  background: var(--hm-bg, inherit);
-  font-family: var(--hm-font-body, inherit);
+  background: var(--hm-bg, inherit){$imp};
+  font-family: var(--hm-font-body, inherit){$imp};
 }
 
 {$selector} h1,
@@ -58,7 +61,7 @@ function hmde_print_astra_mapping_css() {
 
 /* Links */
 {$selector} a{
-  color: var(--hm-link, inherit);
+  color: var(--hm-link, inherit){$imp};
 }
 {$selector} a:hover{
   opacity: .9;
@@ -72,9 +75,9 @@ function hmde_print_astra_mapping_css() {
 {$selector} .wp-element-button,
 {$selector} .ast-button,
 {$selector} .ast-custom-button{
-  background-color: var(--hm-primary, inherit);
-  border-color: var(--hm-primary, inherit);
-  color: #fff;
+  background-color: var(--hm-primary, inherit){$imp};
+  border-color: var(--hm-primary, inherit){$imp};
+  color: #fff{$imp};
 }
 {$selector} .button:hover,
 {$selector} button:hover,
@@ -95,7 +98,7 @@ function hmde_print_astra_mapping_css() {
 {$selector} .site-primary-footer-wrap[data-section='section-primary-footer-builder'],
 {$selector} .site-primary-footer-wrap[data-section='section-primary-footer-builder'] .ast-builder-grid-row-container,
 {$selector} .site-primary-footer-wrap[data-section='section-primary-footer-builder'] .ast-builder-grid-row{
-  background-color: var(--hm-footer, inherit);
+  background-color: var(--hm-footer, inherit){$imp};
 }
 
 /* Make footer text readable */
@@ -118,7 +121,7 @@ function hmde_print_astra_mapping_css() {
 {$selector} .ast-footer-wrap,
 {$selector} .ast-small-footer,
 {$selector} .ast-footer-overlay{
-  background-color: var(--hm-footer, inherit);
+  background-color: var(--hm-footer, inherit){$imp};
 }
 
 /* ==========================================
@@ -130,7 +133,7 @@ function hmde_print_astra_mapping_css() {
 {$selector} .ast-woo-header-cart-total .woocommerce-Price-amount,
 {$selector} .ast-woo-header-cart-total .woocommerce-Price-amount bdi,
 {$selector} .ast-woo-header-cart-total .woocommerce-Price-currencySymbol{
-  color: var(--hm-primary, inherit);
+  color: var(--hm-primary, inherit){$imp};
   font-weight: 600;
 }
 
@@ -142,7 +145,7 @@ function hmde_print_astra_mapping_css() {
 /* Icon as SVG */
 {$selector} .ast-site-header-cart svg,
 {$selector} .ast-site-header-cart svg *{
-  fill: var(--hm-primary, inherit);
+  fill: var(--hm-primary, inherit){$imp};
 }
 
 /* Item count badge (real element variants) */
