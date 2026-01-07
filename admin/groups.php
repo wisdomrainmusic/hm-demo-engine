@@ -36,7 +36,7 @@ function hmde_sanitize_group_payload( array $raw ) {
 }
 
 /**
- * Actions: add / delete
+ * Actions: add / delete / assign preset
  */
 function hmde_handle_groups_actions() {
     if ( ! current_user_can( 'manage_options' ) ) {
@@ -56,13 +56,44 @@ function hmde_handle_groups_actions() {
         $id = hmde_generate_group_id();
 
         $groups[ $id ] = array_merge(
-            array( 'id' => $id ),
+            array(
+                'id'        => $id,
+                'preset_id' => '', // Commit 5: group -> preset mapping
+            ),
             $payload
         );
 
         hmde_save_groups( $groups );
 
         wp_safe_redirect( admin_url( 'admin.php?page=hm-demo-engine-groups&created=1' ) );
+        exit;
+    }
+
+    // Assign preset to group (bulk save)
+    if ( isset( $_POST['hmde_action'] ) && $_POST['hmde_action'] === 'save_group_presets' ) {
+        check_admin_referer( 'hmde_save_group_presets' );
+
+        $groups  = hmde_get_groups();
+        $presets = function_exists( 'hmde_get_presets' ) ? hmde_get_presets() : array();
+
+        $map = isset( $_POST['group_preset'] ) && is_array( $_POST['group_preset'] )
+            ? $_POST['group_preset']
+            : array();
+
+        foreach ( $groups as $gid => $group ) {
+            $pid = isset( $map[ $gid ] ) ? sanitize_text_field( $map[ $gid ] ) : '';
+
+            // Validate preset exists (or allow empty)
+            if ( $pid !== '' && ! isset( $presets[ $pid ] ) ) {
+                $pid = '';
+            }
+
+            $groups[ $gid ]['preset_id'] = $pid;
+        }
+
+        hmde_save_groups( $groups );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=hm-demo-engine-groups&saved=1' ) );
         exit;
     }
 
@@ -91,7 +122,8 @@ function hmde_render_groups_page() {
         return;
     }
 
-    $groups = hmde_get_groups();
+    $groups  = hmde_get_groups();
+    $presets = function_exists( 'hmde_get_presets' ) ? hmde_get_presets() : array();
     ?>
     <div class="wrap">
         <h1>Groups</h1>
@@ -102,6 +134,10 @@ function hmde_render_groups_page() {
 
         <?php if ( isset( $_GET['deleted'] ) ) : ?>
             <div class="notice notice-success is-dismissible"><p>Group deleted.</p></div>
+        <?php endif; ?>
+
+        <?php if ( isset( $_GET['saved'] ) ) : ?>
+            <div class="notice notice-success is-dismissible"><p>Group preset mappings saved.</p></div>
         <?php endif; ?>
 
         <h2>Add New Group</h2>
@@ -135,36 +171,61 @@ function hmde_render_groups_page() {
         <?php if ( empty( $groups ) ) : ?>
             <p>No groups yet.</p>
         <?php else : ?>
-            <table class="widefat striped">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th style="width: 160px;">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php foreach ( $groups as $id => $group ) : ?>
+
+            <form method="post">
+                <?php wp_nonce_field( 'hmde_save_group_presets' ); ?>
+                <input type="hidden" name="hmde_action" value="save_group_presets" />
+
+                <table class="widefat striped">
+                    <thead>
                     <tr>
-                        <td><?php echo esc_html( $group['name'] ?? '' ); ?></td>
-                        <td><?php echo esc_html( $group['description'] ?? '' ); ?></td>
-                        <td>
-                            <?php
-                            $del_url = wp_nonce_url(
-                                admin_url( 'admin.php?page=hm-demo-engine-groups&hmde_action=delete_group&group_id=' . urlencode( $id ) ),
-                                'hmde_delete_group_' . $id
-                            );
-                            ?>
-                            <a class="button button-link-delete" href="<?php echo esc_url( $del_url ); ?>" onclick="return confirm('Delete this group?');">Delete</a>
-                        </td>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Preset</th>
+                        <th style="width: 160px;">Actions</th>
                     </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    <?php foreach ( $groups as $id => $group ) : ?>
+                        <tr>
+                            <td><?php echo esc_html( $group['name'] ?? '' ); ?></td>
+                            <td><?php echo esc_html( $group['description'] ?? '' ); ?></td>
+                            <td>
+                                <?php
+                                $selected_preset = $group['preset_id'] ?? '';
+                                ?>
+                                <select name="group_preset[<?php echo esc_attr( $id ); ?>]">
+                                    <option value="">— None —</option>
+                                    <?php foreach ( $presets as $pid => $preset ) : ?>
+                                        <option value="<?php echo esc_attr( $pid ); ?>" <?php selected( $selected_preset, $pid ); ?>>
+                                            <?php echo esc_html( $preset['name'] ?? $pid ); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </td>
+                            <td>
+                                <?php
+                                $del_url = wp_nonce_url(
+                                    admin_url( 'admin.php?page=hm-demo-engine-groups&hmde_action=delete_group&group_id=' . urlencode( $id ) ),
+                                    'hmde_delete_group_' . $id
+                                );
+                                ?>
+                                <a class="button button-link-delete" href="<?php echo esc_url( $del_url ); ?>" onclick="return confirm('Delete this group?');">Delete</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <p style="margin-top:12px;">
+                    <?php submit_button( 'Save Mappings', 'primary', 'submit', false ); ?>
+                </p>
+            </form>
+
         <?php endif; ?>
 
         <p class="description" style="margin-top:12px;">
-            Next commits will connect Groups to Presets and Pages.
+            Commit 5 connects Groups to Presets. Next commit will generate CSS variables on the frontend.
         </p>
     </div>
     <?php
