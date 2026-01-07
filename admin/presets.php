@@ -6,9 +6,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 const HMDE_PRESETS_OPTION_KEY = 'hmde_presets';
 
 add_action( 'admin_enqueue_scripts', function ( $hook ) {
-    if ( $hook !== 'demo-engine_page_hmde-presets' ) {
+    // Reliable gate: check the page slug directly
+    $page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+
+    if ( $page !== 'hm-demo-engine-presets' ) {
         return;
     }
+
+    // WP color picker styles (sometimes not auto-enqueued)
+    wp_enqueue_style( 'wp-color-picker' );
 
     wp_enqueue_style(
         'hmde-presets-admin',
