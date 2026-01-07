@@ -83,24 +83,52 @@ function hmde_print_menu_hide_css() {
 
     if ( hmde_should_hide_menu( 'primary' ) ) {
         $css .= "
+/* Hide primary menu itself */
 {$selector} .ast-primary-header-bar .main-header-menu,
 {$selector} .ast-primary-header-bar .ast-builder-menu.ast-builder-menu-primary{
   display: none !important;
+}
+
+/* Remove the empty space left by the primary menu container */
+{$selector} .ast-primary-header-bar .ast-builder-grid-row,
+{$selector} .ast-primary-header-bar .ast-builder-grid-row-container,
+{$selector} .ast-primary-header-bar .site-header-primary-section-center,
+{$selector} .ast-primary-header-bar .site-header-primary-section-left,
+{$selector} .ast-primary-header-bar .site-header-primary-section-right{
+  min-height: 0 !important;
+}
+
+{$selector} .ast-primary-header-bar{
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* If center section exists only for menu, collapse it */
+{$selector} .site-header-primary-section-center{
+  height: 0 !important;
+  overflow: hidden !important;
 }
 ";
     }
 
     if ( hmde_should_hide_menu( 'mobile' ) ) {
         $css .= "
-{$selector} .ast-mobile-header-wrap .main-header-menu,
-{$selector} .ast-mobile-header-wrap .ast-builder-menu-primary,
-{$selector} .ast-mobile-popup-drawer,
-{$selector} #ast-mobile-popup{
+/* Hide Astra mobile menu trigger + drawer (multiple Astra variants) */
+{$selector} .ast-mobile-menu-trigger-minimal,
+{$selector} button.menu-toggle,
+{$selector} .menu-toggle,
+{$selector} .ast-button-wrap .menu-toggle{
   display: none !important;
 }
-";
-        $css .= "
-{$selector} .ast-mobile-menu-trigger-minimal{
+
+/* Hide offcanvas / popup containers */
+{$selector} .ast-mobile-popup-drawer,
+{$selector} #ast-mobile-popup,
+{$selector} .ast-mobile-popup-content,
+{$selector} .ast-mobile-popup-inner,
+{$selector} .ast-mobile-popup-overlay,
+{$selector} .ast-mobile-header-content,
+{$selector} .ast-mobile-nav-menu{
   display: none !important;
 }
 ";
