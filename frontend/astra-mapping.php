@@ -31,6 +31,19 @@ function hmde_print_astra_mapping_css() {
 {$selector}{
   background: var(--hm-bg, inherit){$imp};
   font-family: var(--hm-font-body, inherit){$imp};
+
+  /* Astra global color tokens (scoped) */
+  --ast-global-color-0: var(--hm-primary);
+  --ast-global-color-1: var(--hm-link);
+  --ast-global-color-2: var(--hm-dark);
+  --ast-global-color-3: var(--hm-primary);
+  --ast-global-color-4: rgba(0,0,0,.12);
+
+  /* Elementor global color palette (scoped) */
+  --e-global-color-primary: var(--hm-primary);
+  --e-global-color-secondary: var(--hm-link);
+  --e-global-color-text: var(--hm-dark);
+  --e-global-color-accent: var(--hm-primary);
 }
 
 {$selector} h1,
