@@ -83,6 +83,17 @@ function hmde_print_menu_hide_css() {
 
     if ( hmde_should_hide_menu( 'primary' ) ) {
         $css .= "
+/* If primary menu is hidden, collapse the whole primary header bar (logo included) */
+{$selector} .ast-primary-header-bar,
+{$selector} .ast-primary-header-bar-wrap,
+{$selector} .ast-desktop-header-content{
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 /* Hide primary menu itself */
 {$selector} .ast-primary-header-bar .main-header-menu,
 {$selector} .ast-primary-header-bar .ast-builder-menu.ast-builder-menu-primary{
@@ -113,6 +124,13 @@ function hmde_print_menu_hide_css() {
 
     if ( hmde_should_hide_menu( 'mobile' ) ) {
         $css .= "
+{$selector} #ast-mobile-header,
+{$selector} .ast-mobile-header-wrap{
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+}
+
 /* Hide Astra mobile menu trigger + drawer (multiple Astra variants) */
 {$selector} .ast-mobile-menu-trigger-minimal,
 {$selector} button.menu-toggle,
