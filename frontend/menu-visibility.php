@@ -59,6 +59,14 @@ function hmde_filter_nav_menu_args( $args ) {
         }
     }
 
+    // Footer menu (if theme exposes a footer location)
+    if ( hmde_should_hide_menu( 'footer' ) ) {
+        if ( isset( $args['theme_location'] ) && in_array( $args['theme_location'], array( 'footer', 'footer-menu', 'astra-footer-menu' ), true ) ) {
+            $args['echo'] = false;
+            $args['items_wrap'] = '<!-- HMDE: footer menu hidden -->';
+        }
+    }
+
     return $args;
 }
 add_filter( 'wp_nav_menu_args', 'hmde_filter_nav_menu_args', 20 );
@@ -156,6 +164,26 @@ function hmde_print_menu_hide_css() {
         $css .= "
 {$selector} .ast-above-header,
 {$selector} .ast-above-header-bar{
+  display: none !important;
+}
+";
+    }
+
+    if ( hmde_should_hide_menu( 'footer' ) ) {
+        $css .= "
+/* Footer menu hide (Astra + widget nav menus) */
+{$selector} footer .widget_nav_menu,
+{$selector} .site-footer .widget_nav_menu,
+{$selector} .ast-footer-overlay .widget_nav_menu,
+{$selector} .footer-widget-area .widget_nav_menu,
+{$selector} .ast-small-footer .widget_nav_menu{
+  display: none !important;
+}
+
+/* Common Astra footer menu wrappers (defensive) */
+{$selector} .ast-builder-footer .ast-builder-menu,
+{$selector} .ast-footer-menu,
+{$selector} .footer-nav-wrap{
   display: none !important;
 }
 ";
