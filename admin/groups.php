@@ -63,6 +63,7 @@ function hmde_handle_groups_actions() {
                     'primary'   => 0,
                     'mobile'    => 0,
                     'secondary' => 0,
+                    'footer'    => 0,
                 ),
             ),
             $payload
@@ -98,11 +99,13 @@ function hmde_handle_groups_actions() {
             $menu_hide_primary   = isset( $_POST['menu_hide'][ $gid ]['primary'] ) ? 1 : 0;
             $menu_hide_mobile    = isset( $_POST['menu_hide'][ $gid ]['mobile'] ) ? 1 : 0;
             $menu_hide_secondary = isset( $_POST['menu_hide'][ $gid ]['secondary'] ) ? 1 : 0;
+            $menu_hide_footer    = isset( $_POST['menu_hide'][ $gid ]['footer'] ) ? 1 : 0;
 
             $groups[ $gid ]['menu_hide'] = array(
                 'primary'   => $menu_hide_primary,
                 'mobile'    => $menu_hide_mobile,
                 'secondary' => $menu_hide_secondary,
+                'footer'    => $menu_hide_footer,
             );
         }
 
@@ -213,6 +216,7 @@ function hmde_render_groups_page() {
                                 $menu_hide_primary = isset( $menu_hide['primary'] ) ? (int) $menu_hide['primary'] : 0;
                                 $menu_hide_mobile = isset( $menu_hide['mobile'] ) ? (int) $menu_hide['mobile'] : 0;
                                 $menu_hide_secondary = isset( $menu_hide['secondary'] ) ? (int) $menu_hide['secondary'] : 0;
+                                $menu_hide_footer = isset( $menu_hide['footer'] ) ? (int) $menu_hide['footer'] : 0;
                                 ?>
                                 <select name="group_preset[<?php echo esc_attr( $id ); ?>]">
                                     <option value="">— None —</option>
@@ -235,6 +239,10 @@ function hmde_render_groups_page() {
                                 <label style="display:block;">
                                     <input type="checkbox" name="menu_hide[<?php echo esc_attr( $id ); ?>][secondary]" value="1" <?php checked( $menu_hide_secondary, 1 ); ?> />
                                     Secondary
+                                </label>
+                                <label style="display:block;">
+                                    <input type="checkbox" name="menu_hide[<?php echo esc_attr( $id ); ?>][footer]" value="1" <?php checked( $menu_hide_footer, 1 ); ?> />
+                                    Footer
                                 </label>
                             </td>
                             <td>
